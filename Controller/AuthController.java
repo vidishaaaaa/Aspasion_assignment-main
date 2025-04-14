@@ -11,19 +11,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
         Optional<User> userOpt = userService.findByEmail(request.getEmail());
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-                if (!user.getIsVerified()) {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Email not verified.");
-                }
-
+            if (new BCryptPasswordEncoder().matches(request.getPassword(), user.getPassword())) {
                 String token = jwtUtil.generateToken(user.getEmail());
-                return ResponseEntity.ok(new AuthResponse("Login successful!", token));
+                return ResponseEntity.ok(token);
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials!");
     }
+
 }

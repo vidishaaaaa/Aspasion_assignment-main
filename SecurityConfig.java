@@ -1,12 +1,16 @@
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated());
+                .authorizeRequests()
+                .antMatchers("/auth/**").permitAll() // Allow public access to authentication endpoints
+                .anyRequest().authenticated() // All other requests need authentication
+                .and()
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 

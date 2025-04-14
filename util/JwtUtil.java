@@ -5,7 +5,7 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final String SECRET_KEY = "prachiSecretKey12345"; // 🔐 Keep this secure
+    private final String SECRET_KEY = "12345"; // 🔐 Keep this secure
 
     public String generateToken(String email) {
         return Jwts.builder()
